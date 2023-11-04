@@ -1,8 +1,8 @@
-const express = require('express')
-const fs = require('fs')
-const { render } = require('mustache')
-const jose = require('node-jose')
-const path = require('path')
+import express from 'express'
+import fs from 'fs'
+import { render } from 'mustache'
+import jose from 'node-jose'
+import path from 'path'
 
 const assertions = require('../assertions')
 const { generateAuthCode, lookUpByAuthCode } = require('../auth-code')

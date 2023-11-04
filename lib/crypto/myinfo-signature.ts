@@ -1,5 +1,5 @@
-const _ = require('lodash')
-const qs = require('node:querystring')
+import _ from 'lodash';
+import qs from 'node:querystring';
 
 export interface Context {
   client_secret?: string;

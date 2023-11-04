@@ -1,11 +1,11 @@
-const express = require('express')
-const cookieParser = require('cookie-parser')
-const fs = require('fs')
-const { pick } = require('lodash')
-const { render } = require('mustache')
-const path = require('path')
-const qs = require('querystring')
-const { v1: uuid } = require('uuid')
+import cookieParser from 'cookie-parser'
+import express from 'express'
+import fs from 'fs'
+import { pick } from 'lodash'
+import { render } from 'mustache'
+import path from 'path'
+import qs from 'querystring'
+import { v1 as uuid } from 'uuid'
 
 const assertions = require('../../assertions')
 const { lookUpByAuthCode } = require('../../auth-code')

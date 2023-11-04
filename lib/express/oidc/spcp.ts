@@ -1,11 +1,11 @@
-import { CorpPassProfile, SingPassProfile } from "../../assertions"
+import ExpiryMap from 'expiry-map'
+import express from 'express'
+import fs from 'fs'
+import { render } from 'mustache'
+import jose from 'node-jose'
+import path from 'path'
 
-const express = require('express')
-const fs = require('fs')
-const { render } = require('mustache')
-const jose = require('node-jose')
-const path = require('path')
-const ExpiryMap = require('expiry-map')
+import { CorpPassProfile, SingPassProfile } from "../../assertions"
 
 const assertions = require('../../assertions')
 const { generateAuthCode, lookUpByAuthCode } = require('../../auth-code')

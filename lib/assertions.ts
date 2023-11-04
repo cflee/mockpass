@@ -1,7 +1,7 @@
-const crypto = require('crypto')
-const fs = require('fs')
-const jose = require('node-jose')
-const path = require('path')
+import crypto from 'crypto'
+import fs from 'fs'
+import jose from 'node-jose'
+import path from 'path'
 
 const readFrom = (p) => fs.readFileSync(path.resolve(__dirname, p), 'utf8')
 

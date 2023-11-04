@@ -1,12 +1,10 @@
-const crypto = require('crypto')
-const fs = require('fs')
-const path = require('path')
-
-const express = require('express')
-const { pick, partition } = require('lodash')
-
-const jose = require('jose')
-const jwt = require('jsonwebtoken')
+import crypto from 'crypto'
+import express from 'express'
+import fs from 'fs'
+import jose from 'jose'
+import jwt from 'jsonwebtoken'
+import { pick, partition } from 'lodash'
+import path from 'path'
 
 const assertions = require('../../assertions')
 const consent = require('./consent')

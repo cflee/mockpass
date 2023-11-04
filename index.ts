@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const fs = require('fs')
-const express = require('express')
-const morgan = require('morgan')
-const path = require('path')
-require('dotenv').config()
+import express from 'express'
+import fs from 'fs'
+import morgan from 'morgan'
+import path from 'path'
+import 'dotenv/config'
 
 const {
   configOIDC,

@@ -1,13 +1,13 @@
 // This file implements NDI OIDC for Singpass authentication and Corppass OIDC
 // for Corppass authentication.
 
-import { SingPassProfile, CorpPassProfile } from "../../assertions"
+import express from 'express'
+import fs from 'fs'
+import jose from 'jose'
+import { render } from 'mustache'
+import path from 'path'
 
-const express = require('express')
-const fs = require('fs')
-const { render } = require('mustache')
-const jose = require('jose')
-const path = require('path')
+import { SingPassProfile, CorpPassProfile } from "../../assertions"
 
 const assertions = require('../../assertions')
 const { generateAuthCode, lookUpByAuthCode } = require('../../auth-code')
