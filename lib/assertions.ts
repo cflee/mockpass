@@ -3,13 +3,13 @@ import fs from 'fs'
 import jose from 'node-jose'
 import path from 'path'
 
-const readFrom = (p) => fs.readFileSync(path.resolve(__dirname, p), 'utf8')
+const readFrom = (p: string) => fs.readFileSync(path.resolve(__dirname, p), 'utf8')
 
 const signingPem = fs.readFileSync(
   path.resolve(__dirname, '../static/certs/spcp-key.pem'),
 )
 
-const hashToken = (token) => {
+const hashToken = (token: string) => {
   const fullHash = crypto.createHash('sha256')
   fullHash.update(token, 'utf8')
   const fullDigest = fullHash.digest()
@@ -17,7 +17,7 @@ const hashToken = (token) => {
   if (Buffer.isEncoding('base64url')) {
     return digestBuffer.toString('base64url')
   } else {
-    const fromBase64 = (base64String) =>
+    const fromBase64 = (base64String: string) =>
       base64String.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
     return fromBase64(digestBuffer.toString('base64'))
   }
@@ -39,6 +39,8 @@ export interface CorpPassProfile {
   isSingPassHolder: boolean;
   uen: string;
 }
+
+export type IdP = 'singPass' | 'corpPass'
 
 export const oidc = {
   singPass: [
@@ -77,7 +79,7 @@ export const oidc = {
     { nric: 'F1612358R', uuid: '45669f5c-e9ac-43c6-bcd2-9c3757f1fa1c' },
     { nric: 'F1612354N', uuid: 'c38ddb2d-9e5d-45c2-bb70-8ccb54fc8320' },
     { nric: 'F1612357U', uuid: 'f904a2b1-4b61-47e2-bdad-e2d606325e20' },
-    ...Object.keys(myinfo.v3.personas).map((nric) => ({
+    ...Object.keys(myinfo.v3.personas).map((nric): SingPassProfile => ({
       nric,
       uuid: myinfo.v3.personas[nric].uuid.value,
     })),
@@ -142,10 +144,10 @@ export const oidc = {
   ],
   create: {
     singPass: (
-      { nric, uuid },
-      iss,
-      aud,
-      nonce,
+      { nric, uuid }: { nric: string; uuid: string },
+      iss: string,
+      aud: string,
+      nonce: string,
       accessToken = crypto.randomBytes(15).toString('hex'),
     ) => {
       const sub = `s=${nric},u=${uuid}`
@@ -172,10 +174,10 @@ export const oidc = {
       }
     },
     corpPass: async (
-      { nric, uuid, name, isSingPassHolder, uen },
-      iss,
-      aud,
-      nonce,
+      { nric, uuid, name, isSingPassHolder, uen } : { nric: string; uuid: string; name: string; isSingPassHolder: boolean; uen: string },
+      iss: string,
+      aud: string,
+      nonce: string,
     ) => {
       const baseClaims = {
         iat: Math.floor(Date.now() / 1000),

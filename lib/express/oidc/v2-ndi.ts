@@ -1,15 +1,16 @@
 // This file implements NDI OIDC for Singpass authentication and Corppass OIDC
 // for Corppass authentication.
 
-import express from 'express'
+import express, { Express } from 'express'
 import fs from 'fs'
 import jose from 'jose'
 import { render } from 'mustache'
 import path from 'path'
 
-import { SingPassProfile, CorpPassProfile, oidc } from "../../assertions"
+import { SingPassProfile, CorpPassProfile, IdP, oidc } from "../../assertions"
 import { generateAuthCode, lookUpByAuthCode } from '../../auth-code'
 import { buildAssertURL, idGenerator, customProfileFromHeaders } from './utils'
+import { Options } from '../../..'
 
 const LOGIN_TEMPLATE = fs.readFileSync(
   path.resolve(__dirname, '../../../static/html/login-page.html'),
@@ -39,7 +40,7 @@ const singpass_token_endpoint_auth_signing_alg_values_supported = [
 
 const corppass_token_endpoint_auth_signing_alg_values_supported = ['ES256']
 
-const token_endpoint_auth_signing_alg_values_supported = {
+const token_endpoint_auth_signing_alg_values_supported: Record<IdP, string[]> = {
   singPass: singpass_token_endpoint_auth_signing_alg_values_supported,
   corpPass: corppass_token_endpoint_auth_signing_alg_values_supported,
 }
@@ -53,12 +54,12 @@ const singpass_id_token_encryption_alg_values_supported = [
 
 const corppass_id_token_encryption_alg_values_supported = ['ECDH-ES+A256KW']
 
-const id_token_encryption_alg_values_supported = {
+const id_token_encryption_alg_values_supported: Record<IdP, string[]> = {
   singPass: singpass_id_token_encryption_alg_values_supported,
   corpPass: corppass_id_token_encryption_alg_values_supported,
 }
 
-function findEcdhEsEncryptionKey(jwks, crv, algs) {
+function findEcdhEsEncryptionKey(jwks, crv: string, algs: string[]) {
   let encryptionKey = jwks.keys.find(
     (item) =>
       item.use === 'enc' &&
@@ -107,7 +108,7 @@ function findEcdhEsEncryptionKey(jwks, crv, algs) {
   return null
 }
 
-function findEncryptionKey(jwks, algs) {
+function findEncryptionKey(jwks, algs: string[]) {
   let encryptionKey = findEcdhEsEncryptionKey(jwks, 'P-521', algs)
   if (encryptionKey) {
     return encryptionKey
@@ -139,8 +140,9 @@ function findEncryptionKey(jwks, algs) {
   }
 }
 
-export function config(app, { showLoginPage }) {
-  for (const idp of ['singPass', 'corpPass']) {
+export function config(app: Express, { showLoginPage }: Options) {
+  const idps: IdP[] = ['singPass', 'corpPass']
+  for (const idp of idps) {
     const profiles = oidc[idp]
     const defaultProfile =
       profiles.find((p) => p.nric === process.env.MOCKPASS_NRIC) || profiles[0]

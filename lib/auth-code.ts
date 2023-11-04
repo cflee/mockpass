@@ -8,11 +8,11 @@ export function generateAuthCode({ profile, scopes, nonce }: { profile: SingPass
   return data
 }
 
-export function lookUpByAuthCode(authCode) {
+export function lookUpByAuthCode(authCode: string): { profile: SingPassProfile | CorpPassProfile, scopes?: string, nonce: string } {
   const now = Date.now()
   const { time, profile, scopes, nonce } = JSON.parse(authCode)
   if (time + AUTH_CODE_TIMEOUT < now) {
-    return undefined
+    throw new Error(`Auth code expired at ${time + AUTH_CODE_TIMEOUT}, it is now ${now}`)
   }
   return { profile, scopes, nonce }
 }

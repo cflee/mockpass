@@ -1,14 +1,15 @@
 import ExpiryMap from 'expiry-map'
-import express from 'express'
+import express, { Express } from 'express'
 import fs from 'fs'
 import { render } from 'mustache'
 import jose from 'node-jose'
 import path from 'path'
 
-import { CorpPassProfile, SingPassProfile } from "../../assertions"
+import { CorpPassProfile, IdP, SingPassProfile } from "../../assertions"
 import { oidc } from '../../assertions'
 import { generateAuthCode, lookUpByAuthCode } from '../../auth-code'
 import { buildAssertURL, idGenerator, customProfileFromHeaders } from './utils'
+import { Options } from '../../..'
 
 const LOGIN_TEMPLATE = fs.readFileSync(
   path.resolve(__dirname, '../../../static/html/login-page.html'),
@@ -21,8 +22,9 @@ const signingPem = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/spcp-key.pem'),
 )
 
-export function config(app, { showLoginPage, serviceProvider }) {
-  for (const idp of ['singPass', 'corpPass']) {
+export function config(app: Express, { showLoginPage, serviceProvider }: Options) {
+  const idps: IdP[] = ['singPass', 'corpPass']
+  for (const idp of idps) {
     const profiles = oidc[idp]
     const defaultProfile =
       profiles.find((p) => p.nric === process.env.MOCKPASS_NRIC) || profiles[0]

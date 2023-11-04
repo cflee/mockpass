@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import express from 'express'
+import express, { Express, Request, Response } from 'express'
 import fs from 'fs'
 import jose from 'jose'
 import jwt from 'jsonwebtoken'
@@ -8,6 +8,8 @@ import path from 'path'
 
 import { myinfo } from '../../assertions'
 import { authorizeViaOIDC, authorizations } from './consent'
+import { Options } from '../../..'
+import { MyinfoSignatureExtractor } from '../../crypto/myinfo-signature'
 
 const MOCKPASS_PRIVATE_KEY = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/spcp-key.pem'),
@@ -18,9 +20,9 @@ const MOCKPASS_PUBLIC_KEY = fs.readFileSync(
 
 const MYINFO_SECRET = process.env.SERVICE_PROVIDER_MYINFO_SECRET
 
-export default (version, myInfoSignature) =>
-  (app, { serviceProvider, encryptMyInfo }) => {
-    const verify = (signature, baseString) => {
+export default (version: string, myInfoSignature: MyinfoSignatureExtractor) =>
+  (app: Express, { serviceProvider, encryptMyInfo }: Options) => {
+    const verify = (signature: string, baseString: string) => {
       const verifier = crypto.createVerify('RSA-SHA256')
       verifier.update(baseString)
       verifier.end()
@@ -52,7 +54,7 @@ export default (version, myInfoSignature) =>
       return encryptedAndSignedPersona
     }
 
-    const lookupPerson = (allowedAttributes) => async (req, res) => {
+    const lookupPerson = (allowedAttributes) => async (req: Request, res: Response) => {
       const requestedAttributes = (req.query.attributes || '').split(',')
 
       const [attributes, disallowedAttributes] = partition(

@@ -1,5 +1,5 @@
 import cookieParser from 'cookie-parser'
-import express from 'express'
+import express, { Express, Request, Response } from 'express'
 import fs from 'fs'
 import { pick } from 'lodash'
 import { render } from 'mustache'
@@ -19,7 +19,7 @@ const CONSENT_TEMPLATE = fs.readFileSync(
 
 export const authorizations = {}
 
-const authorize = (redirectTo) => (req, res) => {
+const authorize = (redirectTo: (state: string) => string) => (req: Request, res: Response) => {
   const {
     client_id, // eslint-disable-line camelcase
     redirect_uri, // eslint-disable-line camelcase
@@ -47,7 +47,7 @@ export const authorizeViaOIDC = authorize(
     `/singpass/authorize?client_id=MYINFO-CONSENTPLATFORM&redirect_uri=${MYINFO_ASSERT_ENDPOINT}&state=${state}`,
 )
 
-export function config(app) {
+export function config(app: Express) {
   app.get(MYINFO_ASSERT_ENDPOINT, (req, res) => {
     const rawArtifact = req.query.SAMLart || req.query.code
     const artifact = rawArtifact.replace(/ /g, '+')

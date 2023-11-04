@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import _ from 'lodash';
 import qs from 'node:querystring';
 
@@ -6,7 +7,9 @@ export interface Context {
   redirect_uri?: string;
 }
 
-export function pki(authHeader, req, context: Context = {}) {
+export type MyinfoSignatureExtractor = (authHeader: string, req: Request, context?: Context) => { signature: string, baseString: string}
+
+export function pki(authHeader: string, req: Request, context: Context = {}) {
   const authHeaderFieldPairs = _(authHeader)
     .replace(/"/g, '')
     .split(',')

@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Express, Request, Response } from 'express'
 import fs from 'fs'
 import { render } from 'mustache'
 import jose from 'node-jose'
@@ -6,6 +6,7 @@ import path from 'path'
 
 import { myinfo, oidc } from '../assertions'
 import { generateAuthCode, lookUpByAuthCode } from '../auth-code'
+import { Options } from '../..'
 
 const LOGIN_TEMPLATE = fs.readFileSync(
   path.resolve(__dirname, '../../static/html/login-page.html'),
@@ -21,16 +22,16 @@ const signingPem = fs.readFileSync(
 )
 
 const idGenerator = {
-  singPass: ({ nric }) =>
+  singPass: ({ nric }: { nric: string }) =>
     myinfo.v3.personas[nric] ? `${nric} [MyInfo]` : nric,
 }
 
-const buildAssertURL = (redirectURI, authCode, state) =>
+const buildAssertURL = (redirectURI: string, authCode: string, state: string) =>
   `${redirectURI}?code=${encodeURIComponent(
     authCode,
   )}&state=${encodeURIComponent(state)}`
 
-export function config(app, { showLoginPage, serviceProvider }) {
+export function config(app: Express, { showLoginPage, serviceProvider }: Options) {
   const profiles = oidc.singPass
   const defaultProfile =
     profiles.find((p) => p.nric === process.env.MOCKPASS_NRIC) || profiles[0]
@@ -65,7 +66,7 @@ export function config(app, { showLoginPage, serviceProvider }) {
     `${PATH_PREFIX}/token`,
     express.json(),
     express.urlencoded({ extended: true }),
-    async (req, res) => {
+    async (req: Request, res: Response) => {
       console.log(req.body)
       const { client_id: aud, code: authCode } = req.body
 
@@ -115,7 +116,7 @@ export function config(app, { showLoginPage, serviceProvider }) {
     },
   )
 
-  app.get(`${PATH_PREFIX}/userinfo`, async (req, res) => {
+  app.get(`${PATH_PREFIX}/userinfo`, async (req: Request, res: Response) => {
     const authCode = (
       req.headers.authorization || req.headers.Authorization
     ).replace('Bearer ', '')
@@ -258,12 +259,12 @@ const formatVehicles = (vehicles) => {
   return vehicleObjects
 }
 
-const defaultUndefinedToNA = (value) => {
+const defaultUndefinedToNA = (value: string | undefined) => {
   return value || 'NA'
 }
 
 // Refer to https://docs.id.gov.sg/data-catalog
-const sgIDScopeToMyInfoField = (persona, scope) => {
+const sgIDScopeToMyInfoField = (persona, scope: string) => {
   switch (scope) {
     // No NRIC as that is always returned by default
     case 'openid':

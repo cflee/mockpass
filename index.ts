@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import express from 'express'
+import express, { Request } from 'express'
 import fs from 'fs'
 import morgan from 'morgan'
 import path from 'path'
@@ -9,7 +9,26 @@ import { configOIDC, configOIDCv2, configMyInfo, configSGID } from './lib/expres
 
 const PORT = process.env.MOCKPASS_PORT || process.env.PORT || 5156
 
-const serviceProvider = {
+export interface ServiceProvider {
+  cert: Buffer;
+  pubKey: Buffer;
+}
+
+export interface CryptoConfig {
+  signAssertion: boolean;
+  signResponse: boolean;
+  encryptAssertion: boolean;
+  resolveArtifactRequestSigned: boolean;
+}
+
+export interface Options {
+  serviceProvider: ServiceProvider;
+  showLoginPage: (req: Request) => boolean;
+  encryptMyInfo: boolean;
+  cryptoConfig: CryptoConfig;
+}
+
+const serviceProvider: ServiceProvider = {
   cert: fs.readFileSync(
     path.resolve(
       __dirname,
@@ -24,7 +43,7 @@ const serviceProvider = {
   ),
 }
 
-const cryptoConfig = {
+const cryptoConfig: CryptoConfig = {
   signAssertion: process.env.SIGN_ASSERTION !== 'false', // default to true to be backward compatable
   signResponse: process.env.SIGN_RESPONSE !== 'false',
   encryptAssertion: process.env.ENCRYPT_ASSERTION !== 'false',
@@ -32,9 +51,9 @@ const cryptoConfig = {
     process.env.RESOLVE_ARTIFACT_REQUEST_SIGNED !== 'false',
 }
 
-const options = {
+const options: Options = {
   serviceProvider,
-  showLoginPage: (req) =>
+  showLoginPage: (req: Request) =>
     (req.header('X-Show-Login-Page') || process.env.SHOW_LOGIN_PAGE) === 'true',
   encryptMyInfo: process.env.ENCRYPT_MYINFO === 'true',
   cryptoConfig,
