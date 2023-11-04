@@ -170,7 +170,7 @@ function config(app, { showLoginPage, serviceProvider }) {
 
   app.get(`${VERSION_PREFIX}/.well-known/jwks.json`, async (_req, res) => {
     const key = await jose.JWK.asKey(signingPem, 'pem')
-    const jwk = key.toJSON()
+    const jwk: any = key.toJSON()
     jwk.use = 'sig'
     res.json({ keys: [jwk] })
   })

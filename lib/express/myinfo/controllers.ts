@@ -116,7 +116,7 @@ module.exports =
 
       const { sub, scope } = jwt.verify(token, MOCKPASS_PUBLIC_KEY, {
         algorithms: ['RS256'],
-      })
+      }) as any
       if (encryptMyInfo && !verify(signature, baseString)) {
         res.status(401).send({
           code: 401,

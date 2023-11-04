@@ -42,7 +42,7 @@ const pki = function pki(authHeader, req, context: Context = {}) {
     '&' +
     url +
     '&' +
-    qs.unescape(qs.stringify(sortedParams))
+    qs.unescape(qs.stringify(sortedParams as { [k: string]: string }))
 
   return { signature, baseString }
 }
