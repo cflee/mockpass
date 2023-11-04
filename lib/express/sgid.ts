@@ -120,7 +120,7 @@ export function config(app, { showLoginPage, serviceProvider }) {
       req.headers.authorization || req.headers.Authorization
     ).replace('Bearer ', '')
     // eslint-disable-next-line no-unused-vars
-    const { profile, scopes, unused } = lookUpByAuthCode(authCode)
+    const { profile, scopes } = lookUpByAuthCode(authCode)
     const uuid = profile.uuid
     const nric = oidc.singPass.find((p) => p.uuid === uuid).nric
     const persona = myinfo.v3.personas[nric]
