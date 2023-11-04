@@ -1,9 +1,5 @@
-const { config: consent } = require('./consent')
-const controllers = require('./controllers')
+import controllers from './controllers'
+import { pki } from '../../crypto/myinfo-signature'
 
-const { pki } = require('../../crypto/myinfo-signature')
-
-module.exports = {
-  consent,
-  v3: controllers('v3', pki),
-}
+export { config as consent } from './consent'
+export const v3 = controllers('v3', pki)

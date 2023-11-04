@@ -1,4 +1,2 @@
-module.exports = {
-  configOIDC: require('./spcp'),
-  configOIDCv2: require('./v2-ndi'),
-}
+export { config as configOIDC } from './spcp'
+export { config as configOIDCv2 } from './v2-ndi'

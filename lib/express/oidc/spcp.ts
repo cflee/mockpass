@@ -6,14 +6,9 @@ import jose from 'node-jose'
 import path from 'path'
 
 import { CorpPassProfile, SingPassProfile } from "../../assertions"
-
-const assertions = require('../../assertions')
-const { generateAuthCode, lookUpByAuthCode } = require('../../auth-code')
-const {
-  buildAssertURL,
-  idGenerator,
-  customProfileFromHeaders,
-} = require('./utils')
+import { oidc } from '../../assertions'
+import { generateAuthCode, lookUpByAuthCode } from '../../auth-code'
+import { buildAssertURL, idGenerator, customProfileFromHeaders } from './utils'
 
 const LOGIN_TEMPLATE = fs.readFileSync(
   path.resolve(__dirname, '../../../static/html/login-page.html'),
@@ -26,9 +21,9 @@ const signingPem = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/spcp-key.pem'),
 )
 
-function config(app, { showLoginPage, serviceProvider }) {
+export function config(app, { showLoginPage, serviceProvider }) {
   for (const idp of ['singPass', 'corpPass']) {
-    const profiles = assertions.oidc[idp]
+    const profiles = oidc[idp]
     const defaultProfile =
       profiles.find((p) => p.nric === process.env.MOCKPASS_NRIC) || profiles[0]
 
@@ -105,7 +100,7 @@ function config(app, { showLoginPage, serviceProvider }) {
         const iss = `${req.protocol}://${req.get('host')}`
 
         const { idTokenClaims, accessToken, refreshToken } =
-          await assertions.oidc.create[idp](profile, iss, aud, nonce)
+          await oidc.create[idp](profile, iss, aud, nonce)
 
         profileStore.set(refreshToken, profile)
 
@@ -138,5 +133,3 @@ function config(app, { showLoginPage, serviceProvider }) {
   }
   return app
 }
-
-module.exports = config

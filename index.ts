@@ -5,12 +5,7 @@ import morgan from 'morgan'
 import path from 'path'
 import 'dotenv/config'
 
-const {
-  configOIDC,
-  configOIDCv2,
-  configMyInfo,
-  configSGID,
-} = require('./lib/express')
+import { configOIDC, configOIDCv2, configMyInfo, configSGID } from './lib/express'
 
 const PORT = process.env.MOCKPASS_PORT || process.env.PORT || 5156
 

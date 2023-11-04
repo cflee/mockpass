@@ -23,7 +23,7 @@ const hashToken = (token) => {
   }
 }
 
-const myinfo = {
+export const myinfo = {
   v3: JSON.parse(readFrom('../static/myinfo/v3.json')),
 }
 
@@ -40,7 +40,7 @@ export interface CorpPassProfile {
   uen: string;
 }
 
-const oidc = {
+export const oidc = {
   singPass: [
     { nric: 'S8979373D', uuid: 'a9865837-7bd7-46ac-bef4-42a76a946424' },
     { nric: 'S8116474F', uuid: 'f4b70aea-d639-4b79-b8d9-8ace5875f6b1' },
@@ -235,9 +235,4 @@ const oidc = {
       }
     },
   },
-}
-
-module.exports = {
-  oidc,
-  myinfo,
 }

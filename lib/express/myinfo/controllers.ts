@@ -6,8 +6,8 @@ import jwt from 'jsonwebtoken'
 import { pick, partition } from 'lodash'
 import path from 'path'
 
-const assertions = require('../../assertions')
-const consent = require('./consent')
+import { myinfo } from '../../assertions'
+import { authorizeViaOIDC, authorizations } from './consent'
 
 const MOCKPASS_PRIVATE_KEY = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/spcp-key.pem'),
@@ -18,8 +18,7 @@ const MOCKPASS_PUBLIC_KEY = fs.readFileSync(
 
 const MYINFO_SECRET = process.env.SERVICE_PROVIDER_MYINFO_SECRET
 
-module.exports =
-  (version, myInfoSignature) =>
+export default (version, myInfoSignature) =>
   (app, { serviceProvider, encryptMyInfo }) => {
     const verify = (signature, baseString) => {
       const verifier = crypto.createVerify('RSA-SHA256')
@@ -71,7 +70,7 @@ module.exports =
         const transformPersona = encryptMyInfo
           ? encryptPersona
           : (person) => person
-        const persona = assertions.myinfo[version].personas[req.params.uinfin]
+        const persona = myinfo[version].personas[req.params.uinfin]
         res.status(persona ? 200 : 404).send(
           persona
             ? await transformPersona(pick(persona, attributes))
@@ -84,7 +83,7 @@ module.exports =
       }
     }
 
-    const allowedAttributes = assertions.myinfo[version].attributes
+    const allowedAttributes = myinfo[version].attributes
 
     app.get(
       `/myinfo/${version}/person-basic/:uinfin/`,
@@ -132,7 +131,7 @@ module.exports =
       }
     })
 
-    app.get(`/myinfo/${version}/authorise`, consent.authorizeViaOIDC)
+    app.get(`/myinfo/${version}/authorise`, authorizeViaOIDC)
 
     app.post(
       `/myinfo/${version}/token`,
@@ -142,7 +141,7 @@ module.exports =
       }),
       (req, res) => {
         const [tokenTemplate, redirect_uri] =
-          consent.authorizations[req.body.code]
+          authorizations[req.body.code]
         const [, authHeader] = (req.get('Authorization') || '').split(' ')
 
         const { signature, baseString } = MYINFO_SECRET

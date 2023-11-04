@@ -4,8 +4,8 @@ import { render } from 'mustache'
 import jose from 'node-jose'
 import path from 'path'
 
-const assertions = require('../assertions')
-const { generateAuthCode, lookUpByAuthCode } = require('../auth-code')
+import { myinfo, oidc } from '../assertions'
+import { generateAuthCode, lookUpByAuthCode } from '../auth-code'
 
 const LOGIN_TEMPLATE = fs.readFileSync(
   path.resolve(__dirname, '../../static/html/login-page.html'),
@@ -22,7 +22,7 @@ const signingPem = fs.readFileSync(
 
 const idGenerator = {
   singPass: ({ nric }) =>
-    assertions.myinfo.v3.personas[nric] ? `${nric} [MyInfo]` : nric,
+    myinfo.v3.personas[nric] ? `${nric} [MyInfo]` : nric,
 }
 
 const buildAssertURL = (redirectURI, authCode, state) =>
@@ -30,8 +30,8 @@ const buildAssertURL = (redirectURI, authCode, state) =>
     authCode,
   )}&state=${encodeURIComponent(state)}`
 
-function config(app, { showLoginPage, serviceProvider }) {
-  const profiles = assertions.oidc.singPass
+export function config(app, { showLoginPage, serviceProvider }) {
+  const profiles = oidc.singPass
   const defaultProfile =
     profiles.find((p) => p.nric === process.env.MOCKPASS_NRIC) || profiles[0]
 
@@ -41,7 +41,7 @@ function config(app, { showLoginPage, serviceProvider }) {
     console.info(`Requested scope ${scopes}`)
     if (showLoginPage(req)) {
       const values = profiles
-        .filter((profile) => assertions.myinfo.v3.personas[profile.nric])
+        .filter((profile) => myinfo.v3.personas[profile.nric])
         .map((profile) => {
           const authCode = generateAuthCode({ profile, scopes, nonce })
           const assertURL = buildAssertURL(redirectURI, authCode, state)
@@ -81,7 +81,7 @@ function config(app, { showLoginPage, serviceProvider }) {
         const accessToken = authCode
         const iss = `${req.protocol}://${req.get('host') + VERSION_PREFIX}`
 
-        const { idTokenClaims, refreshToken } = assertions.oidc.create.singPass(
+        const { idTokenClaims, refreshToken } = oidc.create.singPass(
           profile,
           iss,
           aud,
@@ -122,8 +122,8 @@ function config(app, { showLoginPage, serviceProvider }) {
     // eslint-disable-next-line no-unused-vars
     const { profile, scopes, unused } = lookUpByAuthCode(authCode)
     const uuid = profile.uuid
-    const nric = assertions.oidc.singPass.find((p) => p.uuid === uuid).nric
-    const persona = assertions.myinfo.v3.personas[nric]
+    const nric = oidc.singPass.find((p) => p.uuid === uuid).nric
+    const persona = myinfo.v3.personas[nric]
 
     console.info(`userinfo scopes ${scopes}`)
     const payloadKey = await jose.JWK.createKey('oct', 256, {
@@ -314,5 +314,3 @@ const sgIDScopeToMyInfoField = (persona, scope) => {
       return 'NA'
   }
 }
-
-module.exports = config

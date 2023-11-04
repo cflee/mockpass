@@ -7,15 +7,9 @@ import jose from 'jose'
 import { render } from 'mustache'
 import path from 'path'
 
-import { SingPassProfile, CorpPassProfile } from "../../assertions"
-
-const assertions = require('../../assertions')
-const { generateAuthCode, lookUpByAuthCode } = require('../../auth-code')
-const {
-  buildAssertURL,
-  idGenerator,
-  customProfileFromHeaders,
-} = require('./utils')
+import { SingPassProfile, CorpPassProfile, oidc } from "../../assertions"
+import { generateAuthCode, lookUpByAuthCode } from '../../auth-code'
+import { buildAssertURL, idGenerator, customProfileFromHeaders } from './utils'
 
 const LOGIN_TEMPLATE = fs.readFileSync(
   path.resolve(__dirname, '../../../static/html/login-page.html'),
@@ -145,9 +139,9 @@ function findEncryptionKey(jwks, algs) {
   }
 }
 
-function config(app, { showLoginPage }) {
+export function config(app, { showLoginPage }) {
   for (const idp of ['singPass', 'corpPass']) {
-    const profiles = assertions.oidc[idp]
+    const profiles = oidc[idp]
     const defaultProfile =
       profiles.find((p) => p.nric === process.env.MOCKPASS_NRIC) || profiles[0]
 
@@ -452,7 +446,7 @@ function config(app, { showLoginPage }) {
           redirect_uri: redirectURI,
         })
 
-        const { idTokenClaims, accessToken } = await assertions.oidc.create[
+        const { idTokenClaims, accessToken } = await oidc.create[
           idp
         ](profile, iss, aud, nonce)
 
@@ -569,5 +563,3 @@ function config(app, { showLoginPage }) {
   }
   return app
 }
-
-module.exports = config

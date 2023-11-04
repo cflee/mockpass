@@ -1,17 +1,18 @@
-const assertions = require('../../assertions')
+import { myinfo } from '../../assertions'
 
-const buildAssertURL = (redirectURI, authCode, state) =>
-  `${redirectURI}?code=${encodeURIComponent(
+export function buildAssertURL(redirectURI, authCode, state) {
+  return `${redirectURI}?code=${encodeURIComponent(
     authCode,
   )}&state=${encodeURIComponent(state)}`
+}
 
-const idGenerator = {
+export const idGenerator = {
   singPass: ({ nric }) =>
-    assertions.myinfo.v3.personas[nric] ? `${nric} [MyInfo]` : nric,
+    myinfo.v3.personas[nric] ? `${nric} [MyInfo]` : nric,
   corpPass: ({ nric, uen }) => `${nric} / UEN: ${uen}`,
 }
 
-const customProfileFromHeaders = {
+export const customProfileFromHeaders = {
   singPass: (req) => {
     const customNricHeader = req.header('X-Custom-NRIC')
     const customUuidHeader = req.header('X-Custom-UUID')
@@ -33,10 +34,4 @@ const customProfileFromHeaders = {
       uen: customUenHeader,
     }
   },
-}
-
-module.exports = {
-  buildAssertURL,
-  idGenerator,
-  customProfileFromHeaders,
 }

@@ -7,8 +7,8 @@ import path from 'path'
 import qs from 'querystring'
 import { v1 as uuid } from 'uuid'
 
-const assertions = require('../../assertions')
-const { lookUpByAuthCode } = require('../../auth-code')
+import { myinfo } from '../../assertions'
+import { lookUpByAuthCode } from '../../auth-code'
 
 const MYINFO_ASSERT_ENDPOINT = '/consent/myinfo-com'
 const AUTHORIZE_ENDPOINT = '/consent/oauth2/authorize'
@@ -17,7 +17,7 @@ const CONSENT_TEMPLATE = fs.readFileSync(
   'utf8',
 )
 
-const authorizations = {}
+export const authorizations = {}
 
 const authorize = (redirectTo) => (req, res) => {
   const {
@@ -42,12 +42,12 @@ const authorize = (redirectTo) => (req, res) => {
   res.redirect(redirectTo(relayState))
 }
 
-const authorizeViaOIDC = authorize(
+export const authorizeViaOIDC = authorize(
   (state) =>
     `/singpass/authorize?client_id=MYINFO-CONSENTPLATFORM&redirect_uri=${MYINFO_ASSERT_ENDPOINT}&state=${state}`,
 )
 
-function config(app) {
+export function config(app) {
   app.get(MYINFO_ASSERT_ENDPOINT, (req, res) => {
     const rawArtifact = req.query.SAMLart || req.query.code
     const artifact = rawArtifact.replace(/ /g, '+')
@@ -58,7 +58,7 @@ function config(app) {
 
     const { nric: id } = profile
 
-    const persona = assertions.myinfo[myinfoVersion].personas[id]
+    const persona = myinfo[myinfoVersion].personas[id]
     if (!persona) {
       res.status(404).send({
         message: 'Cannot find MyInfo Persona',
@@ -133,10 +133,4 @@ function config(app) {
   )
 
   return app
-}
-
-module.exports = {
-  authorizeViaOIDC,
-  authorizations,
-  config,
 }

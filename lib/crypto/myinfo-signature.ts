@@ -6,7 +6,7 @@ export interface Context {
   redirect_uri?: string;
 }
 
-const pki = function pki(authHeader, req, context: Context = {}) {
+export function pki(authHeader, req, context: Context = {}) {
   const authHeaderFieldPairs = _(authHeader)
     .replace(/"/g, '')
     .split(',')
@@ -46,5 +46,3 @@ const pki = function pki(authHeader, req, context: Context = {}) {
 
   return { signature, baseString }
 }
-
-module.exports = { pki }
