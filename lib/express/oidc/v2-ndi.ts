@@ -7,7 +7,7 @@ import jose from 'jose'
 import { render } from 'mustache'
 import path from 'path'
 
-import { SingPassProfile, CorpPassProfile, IdP, oidc } from "../../assertions"
+import { SingPassProfile, CorpPassProfile, IdP, oidc } from '../../assertions'
 import { generateAuthCode, lookUpByAuthCode } from '../../auth-code'
 import { buildAssertURL, idGenerator, customProfileFromHeaders } from './utils'
 import { Options } from '../../..'
@@ -29,7 +29,7 @@ const aspSecret = fs.readFileSync(
 
 const rpPublic = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/oidc-v2-rp-public.json'),
-  'utf8'
+  'utf8',
 )
 
 const singpass_token_endpoint_auth_signing_alg_values_supported = [
@@ -40,10 +40,11 @@ const singpass_token_endpoint_auth_signing_alg_values_supported = [
 
 const corppass_token_endpoint_auth_signing_alg_values_supported = ['ES256']
 
-const token_endpoint_auth_signing_alg_values_supported: Record<IdP, string[]> = {
-  singPass: singpass_token_endpoint_auth_signing_alg_values_supported,
-  corpPass: corppass_token_endpoint_auth_signing_alg_values_supported,
-}
+const token_endpoint_auth_signing_alg_values_supported: Record<IdP, string[]> =
+  {
+    singPass: singpass_token_endpoint_auth_signing_alg_values_supported,
+    corpPass: corppass_token_endpoint_auth_signing_alg_values_supported,
+  }
 
 const singpass_id_token_encryption_alg_values_supported = [
   'ECDH-ES+A256KW',
@@ -234,7 +235,7 @@ export function config(app: Express, { showLoginPage }: Options) {
           ...profile,
           name: `Name of ${nric}`,
           isSingPassHolder: false,
-          uen: uen
+          uen: uen,
         }
       }
 
@@ -448,9 +449,12 @@ export function config(app: Express, { showLoginPage }: Options) {
           redirect_uri: redirectURI,
         })
 
-        const { idTokenClaims, accessToken } = await oidc.create[
-          idp
-        ](profile, iss, aud, nonce)
+        const { idTokenClaims, accessToken } = await oidc.create[idp](
+          profile,
+          iss,
+          aud,
+          nonce,
+        )
 
         // Step 3: Sign ID token with ASP signing key
         const aspKeyset = JSON.parse(aspSecret)

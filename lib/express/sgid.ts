@@ -31,7 +31,10 @@ const buildAssertURL = (redirectURI: string, authCode: string, state: string) =>
     authCode,
   )}&state=${encodeURIComponent(state)}`
 
-export function config(app: Express, { showLoginPage, serviceProvider }: Options) {
+export function config(
+  app: Express,
+  { showLoginPage, serviceProvider }: Options,
+) {
   const profiles = oidc.singPass
   const defaultProfile =
     profiles.find((p) => p.nric === process.env.MOCKPASS_NRIC) || profiles[0]

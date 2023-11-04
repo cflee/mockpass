@@ -41,11 +41,17 @@ export default (version: string, myInfoSignature: MyinfoSignatureExtractor) =>
        * These values weren't picked arbitrarily; they were the defaults used by a library we
        * formerly used: node-jose. We opted to continue using them for backwards compatibility.
        */
-      const privateKey = await jose.importPKCS8(MOCKPASS_PRIVATE_KEY.toString(), 'RS256')
+      const privateKey = await jose.importPKCS8(
+        MOCKPASS_PRIVATE_KEY.toString(),
+        'RS256',
+      )
       const sign = await new jose.SignJWT(persona)
         .setProtectedHeader({ alg: 'RS256' })
         .sign(privateKey)
-      const publicKey = await jose.importX509(serviceProvider.cert.toString(), 'RSA-OAEP')
+      const publicKey = await jose.importX509(
+        serviceProvider.cert.toString(),
+        'RSA-OAEP',
+      )
       const encryptedAndSignedPersona = await new jose.CompactEncrypt(
         Buffer.from(sign),
       )
@@ -54,36 +60,37 @@ export default (version: string, myInfoSignature: MyinfoSignatureExtractor) =>
       return encryptedAndSignedPersona
     }
 
-    const lookupPerson = (allowedAttributes) => async (req: Request, res: Response) => {
-      const requestedAttributes = (req.query.attributes || '').split(',')
+    const lookupPerson =
+      (allowedAttributes) => async (req: Request, res: Response) => {
+        const requestedAttributes = (req.query.attributes || '').split(',')
 
-      const [attributes, disallowedAttributes] = partition(
-        requestedAttributes,
-        (v) => allowedAttributes.includes(v),
-      )
-
-      if (disallowedAttributes.length > 0) {
-        res.status(401).send({
-          code: 401,
-          message: 'Disallowed',
-          fields: disallowedAttributes.join(','),
-        })
-      } else {
-        const transformPersona = encryptMyInfo
-          ? encryptPersona
-          : (person) => person
-        const persona = myinfo[version].personas[req.params.uinfin]
-        res.status(persona ? 200 : 404).send(
-          persona
-            ? await transformPersona(pick(persona, attributes))
-            : {
-                code: 404,
-                message: 'UIN/FIN does not exist in MyInfo.',
-                fields: '',
-              },
+        const [attributes, disallowedAttributes] = partition(
+          requestedAttributes,
+          (v) => allowedAttributes.includes(v),
         )
+
+        if (disallowedAttributes.length > 0) {
+          res.status(401).send({
+            code: 401,
+            message: 'Disallowed',
+            fields: disallowedAttributes.join(','),
+          })
+        } else {
+          const transformPersona = encryptMyInfo
+            ? encryptPersona
+            : (person) => person
+          const persona = myinfo[version].personas[req.params.uinfin]
+          res.status(persona ? 200 : 404).send(
+            persona
+              ? await transformPersona(pick(persona, attributes))
+              : {
+                  code: 404,
+                  message: 'UIN/FIN does not exist in MyInfo.',
+                  fields: '',
+                },
+          )
+        }
       }
-    }
 
     const allowedAttributes = myinfo[version].attributes
 
@@ -142,8 +149,7 @@ export default (version: string, myInfoSignature: MyinfoSignatureExtractor) =>
         type: 'application/x-www-form-urlencoded',
       }),
       (req, res) => {
-        const [tokenTemplate, redirect_uri] =
-          authorizations[req.body.code]
+        const [tokenTemplate, redirect_uri] = authorizations[req.body.code]
         const [, authHeader] = (req.get('Authorization') || '').split(' ')
 
         const { signature, baseString } = MYINFO_SECRET

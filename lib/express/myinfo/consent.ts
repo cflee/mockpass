@@ -19,28 +19,29 @@ const CONSENT_TEMPLATE = fs.readFileSync(
 
 export const authorizations = {}
 
-const authorize = (redirectTo: (state: string) => string) => (req: Request, res: Response) => {
-  const {
-    client_id, // eslint-disable-line camelcase
-    redirect_uri, // eslint-disable-line camelcase
-    attributes,
-    purpose,
-    state,
-  } = req.query
-  const relayStateParams = qs.stringify({
-    client_id,
-    redirect_uri,
-    state,
-    purpose,
-    scope: (attributes || '').replace(/,/g, ' '),
-    realm: MYINFO_ASSERT_ENDPOINT,
-    response_type: 'code',
-  })
-  const relayState = `${AUTHORIZE_ENDPOINT}${encodeURIComponent(
-    '?' + relayStateParams,
-  )}`
-  res.redirect(redirectTo(relayState))
-}
+const authorize =
+  (redirectTo: (state: string) => string) => (req: Request, res: Response) => {
+    const {
+      client_id, // eslint-disable-line camelcase
+      redirect_uri, // eslint-disable-line camelcase
+      attributes,
+      purpose,
+      state,
+    } = req.query
+    const relayStateParams = qs.stringify({
+      client_id,
+      redirect_uri,
+      state,
+      purpose,
+      scope: (attributes || '').replace(/,/g, ' '),
+      realm: MYINFO_ASSERT_ENDPOINT,
+      response_type: 'code',
+    })
+    const relayState = `${AUTHORIZE_ENDPOINT}${encodeURIComponent(
+      '?' + relayStateParams,
+    )}`
+    res.redirect(redirectTo(relayState))
+  }
 
 export const authorizeViaOIDC = authorize(
   (state) =>

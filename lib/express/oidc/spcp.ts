@@ -5,7 +5,7 @@ import { render } from 'mustache'
 import jose from 'node-jose'
 import path from 'path'
 
-import { CorpPassProfile, IdP, SingPassProfile } from "../../assertions"
+import { CorpPassProfile, IdP, SingPassProfile } from '../../assertions'
 import { oidc } from '../../assertions'
 import { generateAuthCode, lookUpByAuthCode } from '../../auth-code'
 import { buildAssertURL, idGenerator, customProfileFromHeaders } from './utils'
@@ -22,7 +22,10 @@ const signingPem = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/spcp-key.pem'),
 )
 
-export function config(app: Express, { showLoginPage, serviceProvider }: Options) {
+export function config(
+  app: Express,
+  { showLoginPage, serviceProvider }: Options,
+) {
   const idps: IdP[] = ['singPass', 'corpPass']
   for (const idp of idps) {
     const profiles = oidc[idp]
@@ -70,7 +73,7 @@ export function config(app: Express, { showLoginPage, serviceProvider }: Options
           ...profile,
           name: `Name of ${nric}`,
           isSingPassHolder: false,
-          uen: uen
+          uen: uen,
         }
       }
 
@@ -101,8 +104,9 @@ export function config(app: Express, { showLoginPage, serviceProvider }: Options
 
         const iss = `${req.protocol}://${req.get('host')}`
 
-        const { idTokenClaims, accessToken, refreshToken } =
-          await oidc.create[idp](profile, iss, aud, nonce)
+        const { idTokenClaims, accessToken, refreshToken } = await oidc.create[
+          idp
+        ](profile, iss, aud, nonce)
 
         profileStore.set(refreshToken, profile)
 

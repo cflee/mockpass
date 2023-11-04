@@ -1,13 +1,17 @@
-import { Request } from 'express';
-import _ from 'lodash';
-import qs from 'node:querystring';
+import { Request } from 'express'
+import _ from 'lodash'
+import qs from 'node:querystring'
 
 export interface Context {
-  client_secret?: string;
-  redirect_uri?: string;
+  client_secret?: string
+  redirect_uri?: string
 }
 
-export type MyinfoSignatureExtractor = (authHeader: string, req: Request, context?: Context) => { signature: string, baseString: string}
+export type MyinfoSignatureExtractor = (
+  authHeader: string,
+  req: Request,
+  context?: Context,
+) => { signature: string; baseString: string }
 
 export function pki(authHeader: string, req: Request, context: Context = {}) {
   const authHeaderFieldPairs = _(authHeader)

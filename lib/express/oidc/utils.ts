@@ -1,7 +1,11 @@
 import { Request } from 'express'
 import { CorpPassProfile, IdP, SingPassProfile, myinfo } from '../../assertions'
 
-export function buildAssertURL(redirectURI: string, authCode: string, state: string) {
+export function buildAssertURL(
+  redirectURI: string,
+  authCode: string,
+  state: string,
+) {
   return `${redirectURI}?code=${encodeURIComponent(
     authCode,
   )}&state=${encodeURIComponent(state)}`

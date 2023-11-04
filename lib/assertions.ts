@@ -3,7 +3,8 @@ import fs from 'fs'
 import jose from 'node-jose'
 import path from 'path'
 
-const readFrom = (p: string) => fs.readFileSync(path.resolve(__dirname, p), 'utf8')
+const readFrom = (p: string) =>
+  fs.readFileSync(path.resolve(__dirname, p), 'utf8')
 
 const signingPem = fs.readFileSync(
   path.resolve(__dirname, '../static/certs/spcp-key.pem'),
@@ -28,16 +29,16 @@ export const myinfo = {
 }
 
 export interface SingPassProfile {
-  nric: string;
-  uuid: string;
+  nric: string
+  uuid: string
 }
 
 export interface CorpPassProfile {
-  nric: string;
-  uuid: string;
-  name: string;
-  isSingPassHolder: boolean;
-  uen: string;
+  nric: string
+  uuid: string
+  name: string
+  isSingPassHolder: boolean
+  uen: string
 }
 
 export type IdP = 'singPass' | 'corpPass'
@@ -79,10 +80,12 @@ export const oidc = {
     { nric: 'F1612358R', uuid: '45669f5c-e9ac-43c6-bcd2-9c3757f1fa1c' },
     { nric: 'F1612354N', uuid: 'c38ddb2d-9e5d-45c2-bb70-8ccb54fc8320' },
     { nric: 'F1612357U', uuid: 'f904a2b1-4b61-47e2-bdad-e2d606325e20' },
-    ...Object.keys(myinfo.v3.personas).map((nric): SingPassProfile => ({
-      nric,
-      uuid: myinfo.v3.personas[nric].uuid.value,
-    })),
+    ...Object.keys(myinfo.v3.personas).map(
+      (nric): SingPassProfile => ({
+        nric,
+        uuid: myinfo.v3.personas[nric].uuid.value,
+      }),
+    ),
   ],
   corpPass: [
     {
@@ -144,7 +147,7 @@ export const oidc = {
   ],
   create: {
     singPass: (
-      { nric, uuid }: { nric: string; uuid: string },
+      { nric, uuid }: SingPassProfile,
       iss: string,
       aud: string,
       nonce: string,
@@ -174,7 +177,7 @@ export const oidc = {
       }
     },
     corpPass: async (
-      { nric, uuid, name, isSingPassHolder, uen } : { nric: string; uuid: string; name: string; isSingPassHolder: boolean; uen: string },
+      { nric, uuid, name, isSingPassHolder, uen }: CorpPassProfile,
       iss: string,
       aud: string,
       nonce: string,
