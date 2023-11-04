@@ -24,14 +24,17 @@ const LOGIN_TEMPLATE = fs.readFileSync(
 
 const aspPublic = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/oidc-v2-asp-public.json'),
+  'utf8',
 )
 
 const aspSecret = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/oidc-v2-asp-secret.json'),
+  'utf8',
 )
 
 const rpPublic = fs.readFileSync(
   path.resolve(__dirname, '../../../static/certs/oidc-v2-rp-public.json'),
+  'utf8'
 )
 
 const singpass_token_endpoint_auth_signing_alg_values_supported = [
