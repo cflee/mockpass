@@ -1,7 +1,12 @@
 const _ = require('lodash')
 const qs = require('node:querystring')
 
-const pki = function pki(authHeader, req, context = {}) {
+export interface Context {
+  client_secret?: string;
+  redirect_uri?: string;
+}
+
+const pki = function pki(authHeader, req, context: Context = {}) {
   const authHeaderFieldPairs = _(authHeader)
     .replace(/"/g, '')
     .split(',')

@@ -67,7 +67,7 @@
     "typescript": "^5.2.2"
   },
   "lint-staged": {
-    "**/*.(js|jsx|ts|tsx)": [
+    "**/*.(js|jsx)": [
       "eslint --fix"
     ]
   },

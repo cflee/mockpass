@@ -114,7 +114,7 @@ module.exports =
       const authHeader = (authz[1] || '').replace(',Bearer', '')
       const { signature, baseString } = encryptMyInfo
         ? myInfoSignature(authHeader, req)
-        : {}
+        : { signature: '', baseString: '' }
 
       const { sub, scope } = jwt.verify(token, MOCKPASS_PUBLIC_KEY, {
         algorithms: ['RS256'],
@@ -152,7 +152,7 @@ module.exports =
               client_secret: MYINFO_SECRET,
               redirect_uri,
             })
-          : {}
+          : { signature: '', baseString: '' }
         if (!tokenTemplate) {
           res.status(400).send({
             code: 400,

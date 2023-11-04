@@ -27,6 +27,19 @@ const myinfo = {
   v3: JSON.parse(readFrom('../static/myinfo/v3.json')),
 }
 
+export interface SingPassProfile {
+  nric: string;
+  uuid: string;
+}
+
+export interface CorpPassProfile {
+  nric: string;
+  uuid: string;
+  name: string;
+  isSingPassHolder: boolean;
+  uen: string;
+}
+
 const oidc = {
   singPass: [
     { nric: 'S8979373D', uuid: 'a9865837-7bd7-46ac-bef4-42a76a946424' },

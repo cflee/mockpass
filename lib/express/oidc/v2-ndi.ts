@@ -1,6 +1,8 @@
 // This file implements NDI OIDC for Singpass authentication and Corppass OIDC
 // for Corppass authentication.
 
+import { SingPassProfile, CorpPassProfile } from "../../assertions"
+
 const express = require('express')
 const fs = require('fs')
 const { render } = require('mustache')
@@ -227,11 +229,14 @@ function config(app, { showLoginPage }) {
     app.get(`/${idp.toLowerCase()}/v2/authorize/custom-profile`, (req, res) => {
       const { nric, uuid, uen, redirectURI, state, nonce } = req.query
 
-      const profile = { nric, uuid }
+      var profile: SingPassProfile | CorpPassProfile = { nric, uuid }
       if (idp === 'corpPass') {
-        profile.name = `Name of ${nric}`
-        profile.isSingPassHolder = false
-        profile.uen = uen
+        profile = {
+          ...profile,
+          name: `Name of ${nric}`,
+          isSingPassHolder: false,
+          uen: uen
+        }
       }
 
       const authCode = generateAuthCode({ profile, nonce })
