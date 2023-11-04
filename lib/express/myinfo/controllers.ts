@@ -40,11 +40,11 @@ module.exports =
        * These values weren't picked arbitrarily; they were the defaults used by a library we
        * formerly used: node-jose. We opted to continue using them for backwards compatibility.
        */
-      const privateKey = await jose.importPKCS8(MOCKPASS_PRIVATE_KEY.toString())
+      const privateKey = await jose.importPKCS8(MOCKPASS_PRIVATE_KEY.toString(), 'RS256')
       const sign = await new jose.SignJWT(persona)
         .setProtectedHeader({ alg: 'RS256' })
         .sign(privateKey)
-      const publicKey = await jose.importX509(serviceProvider.cert.toString())
+      const publicKey = await jose.importX509(serviceProvider.cert.toString(), 'RSA-OAEP')
       const encryptedAndSignedPersona = await new jose.CompactEncrypt(
         Buffer.from(sign),
       )
