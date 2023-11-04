@@ -1,0 +1,13 @@
+{
+  "name": "mockpass",
+  "framework": "express",
+  "scripts": {
+    "build": "exit 0",
+    "start": "node index.js"
+  },
+  "include": [
+    "lib/**",
+    "public/**",
+    "static/**"
+  ]
+}

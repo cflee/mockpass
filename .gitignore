@@ -62,3 +62,9 @@ typings/
 
 # VS Code settings
 .vscode/settings.json
+
+# macOS
+.DS_Store
+
+# Airbase
+/airbase.zip

@@ -1,0 +1,53 @@
+include:
+  - project: "WOG/GVT/ship/ship-hats-templates"
+    ref: "main"
+    file:
+      - "/templates/.gitlab-ci-airbase-nextjs-cicd.yml"
+
+# dedupe merge request pipelines and branch pipelines
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+# review environments only for MR pipelines
+review:
+  extends: .airbase-deploy
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  artifacts:
+    paths:
+      - .airbase/airbase.link.json
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    url: $DYNAMIC_ENVIRONMENT_URL
+    on_stop: stop_review
+
+stop_review:
+  extends: .airbase-destroy
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  needs:
+    - review
+  script:
+    - npx @airbase/airbase-cli destroy "$CI_COMMIT_REF_SLUG" --yes
+  when: manual
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    action: stop
+
+# deploy to production (default) environment only on default branch
+deploy:
+  extends: .airbase-deploy
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - npx @airbase/airbase-cli deploy --output deploy.env --yes
+  environment:
+    name: production
+    url: $DYNAMIC_ENVIRONMENT_URL
