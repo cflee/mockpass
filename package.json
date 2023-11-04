@@ -53,6 +53,7 @@
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
     "@commitlint/travis-cli": "^17.1.2",
+    "@types/node": "^20.8.10",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.2.0",
     "eslint": "^8.0.0",
@@ -62,7 +63,8 @@
     "lint-staged": "^14.0.1",
     "nodemon": "^3.0.1",
     "pinst": "^3.0.0",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "typescript": "^5.2.2"
   },
   "lint-staged": {
     "**/*.(js|jsx|ts|tsx)": [

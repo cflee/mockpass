@@ -68,3 +68,6 @@ typings/
 
 # Airbase
 /airbase.zip
+
+# tsc output
+dist/
