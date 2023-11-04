@@ -58,8 +58,6 @@ configMyInfo.v3(app, options)
 app.enable('trust proxy')
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.listen(PORT, (err) =>
-  err
-    ? console.error('Unable to start MockPass', err)
-    : console.warn(`MockPass listening on ${PORT}`),
-)
+app.listen(PORT)
+.on('error', (err) => console.error('Unable to start MockPass', err))
+.on('listening', () => console.warn(`MockPass listening on ${PORT}`))
