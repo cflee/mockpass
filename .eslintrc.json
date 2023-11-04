@@ -1,13 +1,26 @@
 {
   "extends": [
     "eslint:recommended",
-    "plugin:prettier/recommended"
+    "plugin:@typescript-eslint/recommended-type-checked",
+    "prettier"
   ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2020
+    "ecmaVersion": 2022,
+    "project": true
   },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "root": true,
   "env": {
     "node": true,
-    "es6": true
-  }
+    "es2022": true
+  },
+  "ignorePatterns": [
+    "dist",
+    "public",
+    "static",
+    "commitlint.config.js"
+  ]
 }
