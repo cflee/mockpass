@@ -1,8 +1,36 @@
 include:
-  - project: "WOG/GVT/ship/ship-hats-templates"
-    ref: "main"
+  - project: "innersource/sgts/ship-hats/ship-hats-templates"
+    ref: "v1.1.2"
     file:
-      - "/templates/.gitlab-ci-airbase-nextjs-cicd.yml"
+      - "/templates/.gitlab-ci-common.yml"
+
+.airbase-deploy:
+  image: $NEXUSREPO_DOCKER_PROXY_HOSTNAME/node:latest
+  before_script:
+    - export VARIABLE_NAME=AIRBASE_ACCESS_KEY_ID
+    - !reference [ .check-variable-sh, script ]
+    - export VARIABLE_NAME=AIRBASE_SECRET_ACCESS_KEY
+    - !reference [ .check-variable-sh, script ]
+    - npm ci
+    - echo "$ENV" > .env
+    - npx @airbase/airbase-cli build
+  script:
+    - npx @airbase/airbase-cli deploy "$CI_COMMIT_REF_SLUG" --output deploy.env --yes
+  artifacts:
+    reports:
+      dotenv: deploy.env
+
+.airbase-destroy:
+  extends: .airbase-deploy
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - export VARIABLE_NAME=AIRBASE_ACCESS_KEY_ID
+    - !reference [ .check-variable-sh, script ]
+    - export VARIABLE_NAME=AIRBASE_SECRET_ACCESS_KEY
+    - !reference [ .check-variable-sh, script ]
+  script:
+    - npx @airbase/airbase-cli destroy "$CI_COMMIT_REF_SLUG" --yes
 
 # dedupe merge request pipelines and branch pipelines
 workflow:
