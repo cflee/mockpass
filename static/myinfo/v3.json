@@ -2162,7 +2162,16 @@
         "source": "1",
         "classification": "C",
         "desc": ""
-      }
+      },
+      "publicofficerdetails": [
+        {
+          "work_email": "elizaberth_pierce_johnson@was.gov.sg",
+          "agency_name": "Work Allocation Singapore",
+          "department_name": "Allocation Central",
+          "employment_type": "Fixed Term",
+          "employment_title": "Senior Software Engineer - LLv1 (Individual Contributor) (WAS)"
+        }
+      ]
     },
     "S9812353I": {
       "edulevel": {
@@ -3321,7 +3330,16 @@
         "source": "1",
         "classification": "C",
         "desc": ""
-      }
+      },
+      "publicofficerdetails": [
+        {
+          "work_email": "song_chin_yong@was.gov.sg",
+          "agency_name": "Work Allocation Singapore",
+          "department_name": "Allocation Central",
+          "employment_type": "Fixed Term",
+          "employment_title": "Senior Software Engineer - LLv1 (Individual Contributor) (WAS)"
+        }
+      ]
     },
     "S9912363Z": {
       "edulevel": {
@@ -4357,7 +4375,16 @@
         "source": "1",
         "classification": "C",
         "desc": ""
-      }
+      },
+      "publicofficerdetails": [
+        {
+          "work_email": "chen_qi_fa@was.gov.sg",
+          "agency_name": "Work Allocation Singapore",
+          "department_name": "Allocation Central",
+          "employment_type": "Fixed Term",
+          "employment_title": "Senior Software Engineer - LLv1 (Individual Contributor) (WAS)"
+        }
+      ]
     },
     "S9912374E": {
       "edulevel": {
